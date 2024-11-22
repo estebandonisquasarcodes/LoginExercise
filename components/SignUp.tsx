@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useColorScheme,
   View,
   Alert,
 } from 'react-native';
@@ -12,11 +11,8 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 import * as yup from 'yup';
-import { object, string, number, date, InferType } from 'yup';
+import { object, string} from 'yup';
 import Toast from 'react-native-toast-message';
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
 
 const login_data = (state: { email: string, password: string, password_verification: string }, action: { type: 'EMAIL' | 'PASSWORD' | 'PASSWORD_VALIDATION', value: string }) => {
   switch (action.type) {
@@ -60,7 +56,7 @@ const SignUp: React.FC = () => {
   const register = async () => {
     try {
       await validationSchema.validate(state, { abortEarly: false });
-      // Proceed with registration logic
+
       Alert.alert(
         'Registration Successful',
         'You have successfully registered. Please login to continue.',
@@ -69,30 +65,15 @@ const SignUp: React.FC = () => {
     } catch (error) {
       if (error instanceof yup.ValidationError) {
         error.inner.forEach((err) => {
-          Toast.show({
-            type: 'error',
-            text1: err.path,
-            text2: err.message,
-          });
+          Alert.alert(
+            'Validation Error',
+            err.message,
+            [{ text: 'OK' }]
+          );
         });
-      }
-    }
-    if (state.email === '' || state.password === '' || state.password_verification === '') {
-      Alert.alert(
-        'Email Required',
-        'Please enter your email address to continue.',
-        [{ text: 'OK' }]
-      );
-      return;
-    }
 
-    else if (state.password !== state.password_verification) {
-      Alert.alert(
-        'Password Mismatch',
-        'The passwords do not match. Please try again.',
-        [{ text: 'OK' }]
-      );
-      return;
+        return;
+      }
     }
 
     navigation.navigate('Home');
